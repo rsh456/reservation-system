@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/rsh456/reservation-system/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -51,7 +50,6 @@ func (s *MongoUserStore) GetUsers(ctx context.Context) ([]*types.User, error) {
 }
 
 func (s *MongoUserStore) Drop(ctx context.Context) error {
-	fmt.Println(" --- dropping user collection")
 	return s.coll.Drop(ctx)
 }
 

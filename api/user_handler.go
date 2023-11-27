@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rsh456/reservation-system/db"
@@ -90,9 +89,6 @@ func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(users)
 	data := c.JSON(users)
-	fmt.Println(data)
-
 	return data
 }
