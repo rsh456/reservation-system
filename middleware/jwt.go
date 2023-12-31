@@ -11,7 +11,6 @@ import (
 
 func JWTAuthentication(c *fiber.Ctx) error {
 	token, ok := c.GetReqHeaders()["X-Api-Token"]
-	fmt.Println()
 	if !ok {
 		return fmt.Errorf("unauthorized")
 	}
@@ -24,7 +23,6 @@ func JWTAuthentication(c *fiber.Ctx) error {
 
 	// Check token expiration
 	if time.Now().Unix() > expires {
-		fmt.Println(time.Now().Unix())
 		return fmt.Errorf("token expired")
 	}
 	return c.Next()
