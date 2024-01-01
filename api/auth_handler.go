@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/rsh456/reservation-system/db"
 	"github.com/rsh456/reservation-system/types"
 	"go.mongodb.org/mongo-driver/mongo"
