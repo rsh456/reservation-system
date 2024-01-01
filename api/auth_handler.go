@@ -3,11 +3,12 @@ package api
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt"
 	"github.com/rsh456/reservation-system/db"
 	"github.com/rsh456/reservation-system/types"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,51 +34,58 @@ type AuthResponse struct {
 	Token string      `json:"token"`
 }
 
-// A handler should onyl do:
-//- serialization of incoming request
-//- do soem data fetching
-//- call the business logic
+type genericResp struct {
+	Type string `json:"type"`
+	Msg  string `json:"msg"`
+}
 
+func invalidCredentials(c *fiber.Ctx) error {
+	return c.Status(http.StatusBadRequest).JSON(genericResp{
+		Type: "error",
+		Msg:  "invalid credentials",
+	})
+}
+
+// A handler should only do:
+//   - serialization of the incoming request (JSON)
+//   - do some data fetching from db
+//   - call some business logic
+//   - return the data back the user
 func (h *AuthHandler) HandleAuthenticate(c *fiber.Ctx) error {
 	var params AuthParams
 	if err := c.BodyParser(&params); err != nil {
 		return err
 	}
-
 	user, err := h.userStore.GetUserByEmail(c.Context(), params.Email)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return fmt.Errorf("invalid credentials")
+			return invalidCredentials(c)
 		}
 		return err
 	}
-
-	if types.IsValidPassword(user.EncryptedPassword, params.Password) {
-		return fmt.Errorf("invalid credentials")
+	if !types.IsValidPassword(user.EncryptedPassword, params.Password) {
+		return invalidCredentials(c)
 	}
-
 	resp := AuthResponse{
 		User:  user,
 		Token: createTokenFromUser(user),
 	}
-
 	return c.JSON(resp)
 }
 
 func createTokenFromUser(user *types.User) string {
 	now := time.Now()
-	expiryDate := now.Add(time.Hour * 4).Unix()
+	expires := now.Add(time.Hour * 4).Unix()
 	claims := jwt.MapClaims{
 		"id":      user.ID,
 		"email":   user.Email,
-		"expires": expiryDate,
+		"expires": expires,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	secret := os.Getenv("JWT_SECRET")
 	tokenStr, err := token.SignedString([]byte(secret))
-
 	if err != nil {
-		fmt.Println("failed to signed token with secret", err)
+		fmt.Println("failed to sign token with secret", err)
 	}
 	return tokenStr
 }

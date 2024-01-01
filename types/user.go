@@ -36,7 +36,7 @@ func (p UpdateUserParams) ToBSON() bson.M {
 type CreateUserParams struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
-	Email     string `json:email`
+	Email     string `json:"email"`
 	Password  string `json:"password"`
 }
 

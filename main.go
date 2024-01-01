@@ -7,8 +7,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rsh456/reservation-system/api"
+	"github.com/rsh456/reservation-system/api/middleware"
 	"github.com/rsh456/reservation-system/db"
-	"github.com/rsh456/reservation-system/middleware"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

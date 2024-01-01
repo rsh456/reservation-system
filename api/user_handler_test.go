@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http/httptest"
 	"testing"
@@ -17,7 +18,6 @@ import (
 
 const (
 	testdburi = "mongodb://localhost:27017"
-	dbname    = "hotel-reservation-test"
 )
 
 type testdb struct {
@@ -35,6 +35,7 @@ func setup(t *testing.T) *testdb {
 }
 
 func (tdb *testdb) teardown(t *testing.T) {
+	fmt.Println("dropping user collection")
 	if err := tdb.UserStore.Drop(context.TODO()); err != nil {
 		t.Fatal(err)
 	}
@@ -58,7 +59,6 @@ func TestPostUser(t *testing.T) {
 	b, _ := json.Marshal(params)
 
 	req := httptest.NewRequest("POST", "/", bytes.NewReader(b))
-	resp, _ := app.Test(req)
 	req.Header.Add("Content-Type", "application/json")
 	resp, err := app.Test(req)
 	if err != nil {
