@@ -17,8 +17,8 @@ import (
 
 func insertTestUser(t *testing.T, userStore db.UserStore) *types.User {
 	user, err := types.NewUserFromParams(types.CreateUserParams{
-		Email:     "james@foo.com",
-		FirstName: "james",
+		Email:     "mark@foo.com",
+		FirstName: "mark",
 		LastName:  "foo",
 		Password:  "supersecurepassword",
 	})
@@ -42,7 +42,7 @@ func TestAuthenticateWithWrongPassword(t *testing.T) {
 	app.Post("/auth", authHandler.HandleAuthenticate)
 
 	params := AuthParams{
-		Email:    "james@foo.com",
+		Email:    "mark@foo.com",
 		Password: "supersecurepasswordnotcorrect",
 	}
 	b, _ := json.Marshal(params)
