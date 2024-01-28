@@ -107,11 +107,4 @@ func (h *RoomHandler) isRoomAvailableForBooking(ctx context.Context, roomID prim
 		return false, err
 	}
 	return len(bookings) == 0, nil
-	/* if len(bookings) > 0 {
-		return c.Status(http.StatusBadRequest).JSON(genericResp{
-			Type: "error",
-			Msg:  fmt.Sprintf("room %s already booked", c.Params("id")),
-		})
-	}
-	*/
 }
