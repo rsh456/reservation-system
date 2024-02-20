@@ -36,7 +36,7 @@ func main() {
 		Hotel:   db.NewMongoHotelStore(client),
 	}
 	user := fixtures.AddUser(store, "mark", "foo", false)
-	fmt.Println("james ->", api.CreateTokenFromUser(user))
+	fmt.Println("mark ->", api.CreateTokenFromUser(user))
 	admin := fixtures.AddUser(store, "admin", "admin", true)
 	fmt.Println("admin ->", api.CreateTokenFromUser(admin))
 	fmt.Println(admin)
