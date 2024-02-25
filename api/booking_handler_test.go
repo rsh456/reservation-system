@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/rsh456/reservation-system/api/middleware"
 	"github.com/rsh456/reservation-system/db/fixtures"
 	"github.com/rsh456/reservation-system/types"
 )
@@ -28,7 +27,7 @@ func Test_UserGetBooking(t *testing.T) {
 		till           = from.AddDate(0, 0, 5)
 		booking        = fixtures.AddBooking(db.Store, user.ID, room.ID, from, till)
 		app            = fiber.New()
-		route          = app.Group("/", middleware.JWTAuthentication(db.User))
+		route          = app.Group("/", JWTAuthentication(db.User))
 		bookingHandler = NewBookingHandler(db.Store)
 	)
 
@@ -48,7 +47,6 @@ func Test_UserGetBooking(t *testing.T) {
 	if err := json.NewDecoder(resp.Body).Decode(&bookingResponse); err != nil {
 		t.Fatal(err)
 	}
-	fmt.Println(bookingResponse)
 	if bookingResponse.ID != booking.ID {
 		t.Fatalf("expected %s got %s", booking.ID, bookingResponse.ID)
 	}
@@ -70,7 +68,7 @@ func Test_UserGetBooking(t *testing.T) {
 
 }
 
-func TestAdminGetBooking(t *testing.T) {
+func TestAdminGetBookings(t *testing.T) {
 	db := setup(t)
 	defer db.teardown(t)
 
@@ -83,8 +81,8 @@ func TestAdminGetBooking(t *testing.T) {
 		from           = time.Now()
 		till           = from.AddDate(0, 0, 5)
 		booking        = fixtures.AddBooking(db.Store, user.ID, room.ID, from, till)
-		app            = fiber.New()
-		admin          = app.Group("/", middleware.JWTAuthentication(db.User), middleware.AdminAuth)
+		app            = fiber.New(fiber.Config{ErrorHandler: ErrorHandler})
+		admin          = app.Group("/", JWTAuthentication(db.User), AdminAuth)
 		bookingHandler = NewBookingHandler(db.Store)
 	)
 
@@ -116,16 +114,14 @@ func TestAdminGetBooking(t *testing.T) {
 		t.Fatalf("expected %s got %s", booking.UserID, have.UserID)
 	}
 
-	fmt.Println(bookings)
 	//test non admin cannot access the bookings
 	req = httptest.NewRequest("GET", "/", nil)
-	req.Header.Add("X-Api-token", CreateTokenFromUser(user))
+	req.Header.Add("X-Api-Token", CreateTokenFromUser(user))
 	resp, err = app.Test(req)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode == http.StatusOK {
-		t.Fatalf("expected non 200 response got %d", resp.StatusCode)
+	if resp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("expected status unauthorized got %d", resp.StatusCode)
 	}
-
 }
