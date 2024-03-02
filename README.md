@@ -39,3 +39,6 @@ https://gofiber.io
 ## Docker
 ### Installing mongodb as Docker container
 docker run --name mongodb -d mongo:latest -p 27017:27017
+
+### Running the application from docker
+make docker
