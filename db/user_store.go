@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"os"
 
 	"github.com/rsh456/reservation-system/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -33,9 +34,10 @@ type MongoUserStore struct {
 }
 
 func NewMongoUserStore(client *mongo.Client) *MongoUserStore {
+	dbName := os.Getenv(MongoDBNameEnvName)
 	return &MongoUserStore{
 		client: client,
-		coll:   client.Database(DBNAME).Collection(userColl),
+		coll:   client.Database(dbName).Collection(userColl),
 	}
 }
 
