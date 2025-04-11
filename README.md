@@ -3,12 +3,14 @@ This is a hotel reservation system that allows users to authenticate and manage 
 
 
 ## Features
-- User authentication
-- JWT token-based authentication for secure API access
-Users:
-- Book rooms in selected hotels
-Admins:
-- View/check booking details
+ 
+- Users:
+  * Book rooms in selected hotels
+- Admins:
+  * View/check booking details
+    
+* User authentication
+* JWT token-based authentication for secure API access
 
 ## Getting started
 To run this project locally
