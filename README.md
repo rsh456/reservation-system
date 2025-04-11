@@ -15,10 +15,10 @@ To run this project locally
 
 ## Prerequisites
 - Go installed on your machine
-- MongoDB set up or
-
-### Install mongodb as Docker container
+- MongoDB set up / for install mongodb as Docker container
+```
 docker run --name mongodb -d mongo:latest -p 27017:27017
+```
 
 
 ```
@@ -34,13 +34,15 @@ make build
 make run
 ```
 ### Running the application from docker
+```
 make docker
-
+```
 ### Running tests
+```
 make test
-
+```
 ## Technologies used
-- **Backend**:[Go](https://golang.org/)with[Fiber](https://gofiber.io) (a fast framework for Go)
+- **Backend**: [Go](https://golang.org/) with [Fiber](https://gofiber.io) (a fast framework for Go)
 - **Database**: [MongoDB](https://mongodb.com/)
 Installing mongoDB client
 ```
@@ -50,7 +52,7 @@ go get go.mongodb.org/mongo-driver/v2/mongo
 
 
 ### Deployment to Google Cloud Run
-To deploy this application to Google Cloud Run, we need to adjust the PORT variable, since it is declared in Cloud Run configuration
+To deploy this application to Google Cloud Run, we need to adjust the PORT variable, since it is set in Cloud Run configuration
 
 To build the docker image in MacOS:
 ```
