@@ -34,7 +34,7 @@ func Test_UserGetBooking(t *testing.T) {
 	// Testing authenticated user
 	route.Get("/:id", bookingHandler.HandleGetBooking)
 	req := httptest.NewRequest("GET", fmt.Sprintf("/%s", booking.ID.Hex()), nil)
-	req.Header.Add("X-Api-Token", CreateTokenFromUser(user))
+	req.Header.Add("Authorization", CreateTokenFromUser(user))
 	resp, err := app.Test(req)
 	if err != nil {
 		t.Fatal(err)
@@ -57,7 +57,7 @@ func Test_UserGetBooking(t *testing.T) {
 
 	//test non admin cannot access the bookings
 	req = httptest.NewRequest("GET", fmt.Sprintf("/%s", booking.ID.Hex()), nil)
-	req.Header.Add("X-Api-token", CreateTokenFromUser(noAuthUser))
+	req.Header.Add("Authorization", CreateTokenFromUser(noAuthUser))
 	resp, err = app.Test(req)
 	if err != nil {
 		t.Fatal(err)
@@ -90,7 +90,7 @@ func TestAdminGetBookings(t *testing.T) {
 	_ = booking
 	admin.Get("/", bookingHandler.HandleGetBookings)
 	req := httptest.NewRequest("GET", "/", nil)
-	req.Header.Add("X-Api-token", CreateTokenFromUser(adminUser))
+	req.Header.Add("Authorization", CreateTokenFromUser(adminUser))
 	resp, err := app.Test(req)
 	if err != nil {
 		t.Fatal(err)
@@ -116,7 +116,7 @@ func TestAdminGetBookings(t *testing.T) {
 
 	//test non admin cannot access the bookings
 	req = httptest.NewRequest("GET", "/", nil)
-	req.Header.Add("X-Api-Token", CreateTokenFromUser(user))
+	req.Header.Add("Authorization", CreateTokenFromUser(user))
 	resp, err = app.Test(req)
 	if err != nil {
 		t.Fatal(err)

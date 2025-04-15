@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"github.com/rsh456/reservation-system/api"
 	"github.com/rsh456/reservation-system/db"
@@ -23,6 +24,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	app := fiber.New(config)
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "*",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, Accept-Encoding, Content-Lenght, Accept-Language, Access-Control-Allow-Origin, Connection",
+		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
+		AllowCredentials: true,
+	}))
+
 	var (
 		hotelStore   = db.NewMongoHotelStore(client)
 		roomStore    = db.NewMongoRoomStore(client, hotelStore)
@@ -39,7 +48,6 @@ func main() {
 		authHandler    = api.NewAuthHandler(userStore)
 		roomHandler    = api.NewRoomHandler(store)
 		bookingHandler = api.NewBookingHandler(store)
-		app            = fiber.New(config)
 		apiv1          = app.Group("/api/v1", api.JWTAuthentication(userStore))
 		auth           = app.Group("/api")
 		admin          = apiv1.Group("/admin", api.AdminAuth)
@@ -65,7 +73,6 @@ func main() {
 	// rooms handlers
 	apiv1.Post("/room/:id/book", roomHandler.HandleBookRoom)
 	apiv1.Get("/room", roomHandler.HandleGetRooms)
-	// TODO: cancel a booking
 
 	// booking handlers
 	apiv1.Get("/booking/:id", bookingHandler.HandleGetBooking)
@@ -74,8 +81,8 @@ func main() {
 	// admin handlers
 	admin.Get("/booking", bookingHandler.HandleGetBookings)
 
-	listenAddr := os.Getenv("HTTP_LISTEN_ADDRESS")
-	app.Listen(listenAddr)
+	listenPort := os.Getenv("PORT")
+	app.Listen(":" + listenPort)
 }
 
 func handleFoo(c *fiber.Ctx) error {

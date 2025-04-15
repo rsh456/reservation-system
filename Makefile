@@ -11,7 +11,7 @@ docker:
 	echo "building docker file"
 	@docker build -t api .
 	echo "running API inside Docker container"
-	@docker run -p 5000:5000 api
+	@docker run -p 8502:8502 api
 
 test:
 	@go test -v ./...

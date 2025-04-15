@@ -14,10 +14,11 @@ import (
 // declarative pattern by declarating a function into another function
 func JWTAuthentication(userStore db.UserStore) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		token, ok := c.GetReqHeaders()["X-Api-Token"]
+		token, ok := c.GetReqHeaders()["Authorization"]
 		if !ok {
 			return ErrUnAuthorized()
 		}
+		token = token[len("Bearer "):]
 		claims, err := validateToken(token)
 		if err != nil {
 			return err
@@ -35,7 +36,7 @@ func JWTAuthentication(userStore db.UserStore) fiber.Handler {
 		if err != nil {
 			return ErrUnAuthorized()
 		}
-		// Set the current autehnticated user to the context value
+		// Set the current authenticated user to the context value
 		c.Context().SetUserValue("user", user)
 		return c.Next()
 	}
